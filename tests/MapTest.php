@@ -6,7 +6,7 @@
  * @license     MIT, http://flightphp.com/license
  */
 
-require_once 'PHPUnit/Autoload.php';
+require_once 'vendor/autoload.php';
 require_once __DIR__.'/../flight/autoload.php';
 require_once __DIR__.'/classes/Hello.php';
 
@@ -61,5 +61,12 @@ class MapTest extends PHPUnit_Framework_TestCase
         $result = $this->app->map4();
 
         $this->assertEquals('goodbye', $result);
+    }
+
+    // Unmapped method
+    function testUnmapped() {
+        $this->setExpectedException('Exception', 'doesNotExist must be a mapped method.');
+
+        $this->app->doesNotExist();
     }
 }

@@ -25,8 +25,16 @@ Flight is released under the [MIT](http://flightphp.com/license) license.
 
 # Installation
 
-1\. [Download](https://github.com/mikecao/flight/tarball/master) and extract
-the Flight framework files to your web directory.
+1\. Download the files.
+
+If you're using [Composer](https://getcomposer.org/), you can run the following command:
+
+```
+composer require mikecao/flight
+```
+
+OR you can [download](https://github.com/mikecao/flight/archive/master.zip) them directly 
+and extract them to your web directory.
 
 2\. Configure your webserver.
 
@@ -38,6 +46,8 @@ RewriteCond %{REQUEST_FILENAME} !-f
 RewriteCond %{REQUEST_FILENAME} !-d
 RewriteRule ^(.*)$ index.php [QSA,L]
 ```
+
+**Note**: If you need to use flight in a subdirectory add the line `RewriteBase /subdir/` just after `RewriteEngine On`.
 
 For *Nginx*, add the following to your server declaration:
 
@@ -54,6 +64,12 @@ First include the framework.
 
 ```php
 require 'flight/Flight.php';
+```
+
+If you're using Composer, run the autoloader instead.
+
+```php
+require 'vendor/autoload.php';
 ```
 
 Then define a route and assign a function to handle the request.
@@ -99,7 +115,26 @@ class Greeting {
     }
 }
 
-Flight::route('/', array('Greeting','hello'));
+Flight::route('/', array('Greeting', 'hello'));
+```
+
+Or an object method:
+
+```php
+class Greeting
+{
+    public function __construct() {
+        $this->name = 'John Doe';
+    }
+
+    public function hello() {
+        echo "Hello, {$this->name}!";
+    }
+}
+
+$greeting = new Greeting();
+
+Flight::route('/', array($greeting, 'hello')); 
 ```
 
 Routes are matched in the order they are defined. The first route to match a
@@ -709,7 +744,7 @@ $body = Flight::request()->getBody();
 
 ## JSON Input
 
-If you send request with the type `application/json` and the data `{"id": 123}` it will be availabe
+If you send a request with the type `application/json` and the data `{"id": 123}` it will be available
 from the `data` property:
 
 ```php
@@ -810,9 +845,11 @@ Flight::set('flight.log_errors', true);
 The following is a list of all the available configuration settings:
 
     flight.base_url - Override the base url of the request. (default: null)
+    flight.case_sensitive - Case sensitive matching for URLs. (default: false)
     flight.handle_errors - Allow Flight to handle all errors internally. (default: true)
     flight.log_errors - Log errors to the web server's error log file. (default: false)
     flight.views.path - Directory containing view template files. (default: ./views)
+    flight.views.extension - View template file extension. (default: .php)
 
 # Framework Methods
 
@@ -850,8 +887,8 @@ Flight::error($exception) // Sends an HTTP 500 response.
 Flight::notFound() // Sends an HTTP 404 response.
 Flight::etag($id, [$type]) // Performs ETag HTTP caching.
 Flight::lastModified($time) // Performs last modified HTTP caching.
-Flight::json($data, [$code], [$encode]) // Sends a JSON response.
-Flight::jsonp($data, [$param], [$code], [$encode]) // Sends a JSONP response.
+Flight::json($data, [$code], [$encode], [$charset], [$option]) // Sends a JSON response.
+Flight::jsonp($data, [$param], [$code], [$encode], [$charset], [$option]) // Sends a JSONP response.
 ```
 
 Any custom methods added with `map` and `register` can also be filtered.

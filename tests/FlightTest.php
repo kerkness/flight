@@ -6,7 +6,7 @@
  * @license     MIT, http://flightphp.com/license
  */
 
-require_once 'PHPUnit/Autoload.php';
+require_once 'vendor/autoload.php';
 require_once __DIR__.'/../flight/Flight.php';
 
 class FlightTest extends PHPUnit_Framework_TestCase
@@ -72,5 +72,12 @@ class FlightTest extends PHPUnit_Framework_TestCase
         $result = Flight::map1();
 
         $this->assertEquals('hello', $result);
+    }
+
+    // Unmapped method
+    function testUnmapped() {
+        $this->setExpectedException('Exception', 'doesNotExist must be a mapped method.');
+
+        Flight::doesNotExist();
     }
 }
