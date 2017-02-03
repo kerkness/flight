@@ -13,11 +13,12 @@ namespace flight\template;
  * methods for managing view data and inserts the data into
  * view templates upon rendering.
  */
-class View {
+class View
+{
     /**
      * Location of view templates.
      *
-     * @var string
+     * @var mixed
      */
     public $path;
 
@@ -47,7 +48,8 @@ class View {
      *
      * @param string $path Path to templates directory
      */
-    public function __construct($path = '.') {
+    public function __construct($path = array('.'))
+    {
         $this->path = $path;
     }
 
@@ -167,8 +169,19 @@ class View {
         if ((substr($file, 0, 1) == '/')) {
             return $file;
         }
+
+        if( ! is_array($this->path) ){
+            $this->path = array($this->path);
+        }
+
+        foreach( $this->path as $path )
+        {
+            if( is_file($path.'/'.$file) ){
+                return $path.'/'.$file;
+            }
+        }
         
-        return $this->path.'/'.$file;
+        return $this->path[0].'/'.$file;
     }
 
     /**
